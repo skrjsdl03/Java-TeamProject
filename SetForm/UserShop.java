@@ -264,8 +264,8 @@ public class UserShop extends JFrame{
 	
 	
 	public static void main(String[] args) {
-		UserShop ushop = new UserShop();
 		AdminShop adShop = new AdminShop();
+		UserShop ushop = new UserShop();
 
 		
 	}
