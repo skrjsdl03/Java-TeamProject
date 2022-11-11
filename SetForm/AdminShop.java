@@ -283,7 +283,7 @@ public class AdminShop extends JFrame{
 			}
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String item = JOptionPane.showInputDialog(null, "n등 상품을 지정하세요", "n등 상품 지정");
+				String item = JOptionPane.showInputDialog(null, val + "등 상품을 지정하세요");
 				
 				// Cancel
 				if(item == null) {
