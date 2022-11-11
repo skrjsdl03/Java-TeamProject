@@ -236,9 +236,6 @@ public class UserShop extends JFrame{
 	}
 	
 
-	
-	
-
 	// 폰트 설정
 	public void SetFont(JButton button, int size) {
 		Font font = new Font("돋움", Font.BOLD, size);
