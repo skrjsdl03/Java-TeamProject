@@ -4,35 +4,81 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class DBA {
 	private Connection conn;
+	//DB 접속을 위한 주소, 아이디, 비밀번호
 	private static String dburl= "jdbc:mysql://localhost:3306/test?serverTimezone=UTC";;
 	private static String dbUser= "testjju";
 	private static String dbpw="1234";
 	
-	public DBA(){}
-	public void selectData() {
+	//모든 유저 조회 : 관리자 페이지의 리스트에 들어갈 예정 //유저클래스는 유저클래스네임으로 바꿀것
+	//조회 메소드는 추가 수정 삭제와 다르게 인자는 리스트가 들어갈 예정, 데이터 받아와야하니까
+	public void selectAllData(ArrayList<유저클래스> list) {
 		try {
 			System.out.println("db로딩중");
 			conn=DriverManager.getConnection(dburl, dbUser, dbpw);
 		}catch(Exception e) {
 			System.out.println("db로딩 실패");
 		}
-		String sql="Select * from user";
+		String sql="Select * from user where 사원번호!=0";
 		try {
-			PreparedStatement pstmt=conn.prepareStatement(sql);
+			Statement stmt=conn.createStatement();
+			ResultSet rs=stmt.executeQuery(sql);
+			while(rs.next()) {
+				유저클래스 user=new 유저클래스();
+				유저클래스.setId(rs.getInt("사원번호"));
+				유저클래스.setName(rs.getString("사원이름"));
+				유저클래스.setDepart(rs.getString("부서"));
+				유저클래스.setRank(rs.getString("직급"));
+				유저클래스.setHalfway(rs.getInt("반차"));
+				유저클래스.setReward(rs.getInt("상벌점"));
+				유저클래스.setPoint(rs.getInt("포인트"));
+				list.add(유저클래스);
+			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		
-		
 		try {
 			conn.close();
 		}catch(SQLException e) {}
 	}
+	//유저 한명 조회, 사원번호로 특정 유저 '한명만' 불러온다.	
+	//수정과 함께 쓰일 예정, 수정 메소드 이전에 한번 실행되게 할 것
+	public void selectOnlyoneData(ArrayList<유저클래스> list,int id) {
+		try {
+			System.out.println("db로딩중");
+			conn=DriverManager.getConnection(dburl, dbUser, dbpw);
+		}catch(Exception e) {
+			System.out.println("db로딩 실패");
+		}
+		String sql="Select * from user where 사원번호=?";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1,id);
+			ResultSet rs=pstmt.executeQuery(sql);
+			while(rs.next()) {
+				유저클래스 user=new 유저클래스();
+				유저클래스.setId(rs.getInt("사원번호"));
+				유저클래스.setName(rs.getString("사원이름"));
+				유저클래스.setDepart(rs.getString("부서"));
+				유저클래스.setRank(rs.getString("직급"));
+				유저클래스.setHalfway(rs.getInt("반차"));
+				유저클래스.setReward(rs.getInt("상벌점"));
+				유저클래스.setPoint(rs.getInt("포인트"));
+				list.add(유저클래스);
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			conn.close();
+		}catch(SQLException e) {}
+	}
+	//유저를 추가 : 관리자 페이지의 추가에 들어갈 예정, 유저 클래스의 필드의 모든 값을 입력받는다.
 	public void insertData(int id,String name, String depart, String rank, int halfway, int reward,int point) {
 		try {
 			System.out.println("db로딩중");
@@ -70,6 +116,9 @@ public class DBA {
 			conn.close();
 		}catch(SQLException e) {}
 	}
+	//유저 클래스를 수정 : 관리자 페이지의 수정에 들어갈 예정, id는 수정할 수 없다. id가 수정을 위한 고유한 키이기 때문
+	//추가와 마찬가지로 모든 데이터를 입력 받는다.
+	//수정을 위한 기존 데이터 불러오기 추가하여 폼 불러올때 기본값 입력되게 한 후 변경할 수 있게 하면 될듯
 	public void updateData(int id,String name, String depart, String rank, int halfway, int reward,int point) {
 		try {
 			System.out.println("db로딩중");
@@ -108,6 +157,7 @@ public class DBA {
 			conn.close();
 		}catch(SQLException e) {}
 	}
+	//유저 삭제 : 관리자 클래스의 삭제에 들어갈 예정, id만 입력받아 삭제할 수 있다.
 	public void deleteData(int id) {
 		try {
 			System.out.println("db로딩중");
@@ -138,6 +188,7 @@ public class DBA {
 			conn.close();
 		}catch(SQLException e) {}
 	}
+	//메인함수는 폼 입출력에 참고하고 추후에 지울 예정
 	public static void main(String[] args) {
 		Scanner sc=new Scanner(System.in);
 		DBA db= new DBA();
